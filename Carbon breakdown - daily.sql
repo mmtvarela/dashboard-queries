@@ -1,6 +1,6 @@
 SELECT
     va.cpe,
-    DATE_TRUNC('month', v.timestamp) AS consumption_day,
+    DATE_TRUNC('day', v.timestamp) AS consumption_day,
     ROUND(SUM((v.renewable_biomass_kwh * v.active_energy))::numeric, 4) AS renewable_biomass_gco2eq,
     ROUND(SUM((v.renewable_hydro_kwh * v.active_energy))::numeric, 4) AS renewable_hydro_gco2eq,
     ROUND(SUM((v.renewable_solar_kwh * v.active_energy))::numeric, 4) AS renewable_solar_gco2eq,
@@ -31,8 +31,8 @@ WHERE
 GROUP BY
     va.cpe,
     va.client,
-	DATE_TRUNC('month', v.timestamp)
+	DATE_TRUNC('day', v.timestamp)
 ORDER BY
     va.cpe,
     va.client,
-	DATE_TRUNC('month', v.timestamp)
+	DATE_TRUNC('day', v.timestamp)

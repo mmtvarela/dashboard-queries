@@ -1,7 +1,6 @@
--- needs to be double checked
 SELECT
     va.cpe,
-    DATE_TRUNC('hour', v.timestamp) AS consumption_hour,
+    DATE_TRUNC('minutes', v.timestamp) AS consumption_day,
     ROUND(SUM((v.renewable_biomass_kwh * v.active_energy))::numeric, 4) AS renewable_biomass_gco2eq,
     ROUND(SUM((v.renewable_hydro_kwh * v.active_energy))::numeric, 4) AS renewable_hydro_gco2eq,
     ROUND(SUM((v.renewable_solar_kwh * v.active_energy))::numeric, 4) AS renewable_solar_gco2eq,
@@ -23,17 +22,17 @@ SELECT
     ROUND(SUM((v.hydropumpedstorage_kwh * v.active_energy))::numeric, 4) AS hydropumpedstorage_gco2eq,
     ROUND(SUM((v.unknown_kwh * v.active_energy))::numeric, 4) AS unknown_gco2eq
 FROM
-    "view-curate-eredes-process-wcfp-app-with-reactive" v
+    mv_curated_data v
 JOIN
-    metadata.form_assets va ON v.cpe = va.cpe
-JOIN
-    metadata.users u ON va.company_vat = u.vat
+    metadata.sample_assets_data va ON v.cpe = va.cpe -- replace the table name to form_assets
 WHERE
-    u.id = 51  -- Replace with the user's ID
-    AND v.timestamp >= NOW() - INTERVAL '15 minutes'  -- Adjust as needed for current time - 15 minutes
+    va.user_id = 51 -- user id should be dynamically (obviously)
+    AND v.timestamp >= (CURRENT_DATE - INTERVAL '2 years')  -- 2 years historical data
 GROUP BY
     va.cpe,
-    consumption_hour
+    va.client,
+	DATE_TRUNC('minutes', v.timestamp)
 ORDER BY
     va.cpe,
-    consumption_hour;
+    va.client,
+	DATE_TRUNC('minutes', v.timestamp)

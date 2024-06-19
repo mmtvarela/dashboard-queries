@@ -1,5 +1,6 @@
 SELECT
-    DATE_TRUNC('year', v.timestamp) AS year,
+    va.cpe,
+    DATE_TRUNC('year', v.timestamp) AS consumption_day,
     ROUND(SUM((v.renewable_biomass_kwh * v.active_energy))::numeric, 4) AS renewable_biomass_gco2eq,
     ROUND(SUM((v.renewable_hydro_kwh * v.active_energy))::numeric, 4) AS renewable_hydro_gco2eq,
     ROUND(SUM((v.renewable_solar_kwh * v.active_energy))::numeric, 4) AS renewable_solar_gco2eq,
@@ -21,15 +22,17 @@ SELECT
     ROUND(SUM((v.hydropumpedstorage_kwh * v.active_energy))::numeric, 4) AS hydropumpedstorage_gco2eq,
     ROUND(SUM((v.unknown_kwh * v.active_energy))::numeric, 4) AS unknown_gco2eq
 FROM
-    "view-curate-eredes-process-wcfp-app-with-reactive" v
+    mv_curated_data v
 JOIN
-    metadata.form_assets va ON v.cpe = va.cpe
-JOIN
-    metadata.users u ON va.company_vat = u.vat
+    metadata.sample_assets_data va ON v.cpe = va.cpe -- replace the table name to form_assets
 WHERE
-    u.id = 51  -- Replace with the user's ID
-    AND v.timestamp >= DATE_TRUNC('year', NOW()) - INTERVAL '1 year'  -- Data from the beginning of the previous year
+    va.user_id = 51 -- user id should be dynamically (obviously)
+    AND v.timestamp >= (CURRENT_DATE - INTERVAL '2 years')  -- 2 years historical data
 GROUP BY
-    DATE_TRUNC('year', v.timestamp)
+    va.cpe,
+    va.client,
+	DATE_TRUNC('year', v.timestamp)
 ORDER BY
-    DATE_TRUNC('year', v.timestamp);
+    va.cpe,
+    va.client,
+	DATE_TRUNC('year', v.timestamp)
