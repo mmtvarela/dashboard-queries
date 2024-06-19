@@ -1,5 +1,5 @@
 SELECT *
-FROM "view-curate-eredes-process-wcfp-app-with-reactive" v
+FROM mv_curated_data v
 JOIN (
     SELECT va.cpe
     FROM metadata.users u
