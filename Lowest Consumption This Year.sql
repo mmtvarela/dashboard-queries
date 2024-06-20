@@ -19,11 +19,8 @@ WITH daily_consumption AS (
 SELECT
     cpe,
     consumption_date,
-    max_active_energy,
     min_active_energy,
-    max_reactive_inductive_energy,
     min_reactive_inductive_energy,
-    max_reactive_capacitive_energy,
     min_reactive_capacitive_energy
 FROM
     daily_consumption

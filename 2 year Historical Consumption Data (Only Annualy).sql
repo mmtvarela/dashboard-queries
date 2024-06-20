@@ -3,7 +3,7 @@ SELECT
     DATE_TRUNC('year', v.timestamp) AS time_start,  -- Truncate to minute
     SUM(v.active_energy) AS total_active_energy,
     SUM(v.reactive_inductive_energy) AS total_reactive_inductive_energy,
-    SUM(v.reactive_capacitive_energy) AS total_reactive_capacitive_energy,
+    SUM(v.reactive_capacitive_energy) AS total_reactive_capacitive_energy
 FROM
     mv_curated_data v
 JOIN
